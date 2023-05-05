@@ -96,14 +96,28 @@ app.get("/clientes", async (req, res) => {
 });
 
 app.post("/search-cliente", async (req, res) => {
-  const { apellido } = req.body || "";
-  const { nombre } = req.body || "";
-  const { dni } = req.body || "";
-  const clienteEncontrado = await Cliente.findAll({
+  const clientesEncontrado = await Cliente.findAll({
     where: req.body,
   });
+  res.json(clientesEncontrado);
+  // Con esta info ya tiene todos los datos de cada cliente q coincide
+});
+
+app.get("/cliente/:id", async (req, res) => {
+  const clienteId = req.params.id;
+  const clienteEncontrado = await Cliente.findByPk(clienteId);
   res.json(clienteEncontrado);
 });
+
+app.post("/edit-cliente/:id", async (req, res) => {
+  const clienteId = req.params.id;
+  const clienteEditado = await Cliente.update(req.body, {
+    where: { id: clienteId },
+  });
+  res.json(clienteEditado);
+});
+
+
 
 app.use(express.static(staticDirPath));
 
