@@ -1,12 +1,12 @@
 import { User } from "./user";
 import { Auth } from "./auth";
-import { Test } from "./test";
-import { Estado } from "./estado";
+import { EstadoUser } from "./estado-user";
+import { Cliente } from "./cliente";
 
 Auth.hasOne(User);
 User.belongsTo(Auth);
 
-User.hasOne(Estado)
-Estado.belongsTo(User)
+User.hasOne(EstadoUser);
+EstadoUser.belongsTo(User);
 
-export { User, Auth, Test, Estado };
+export { User, Auth, EstadoUser, Cliente };

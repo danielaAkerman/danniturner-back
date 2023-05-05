@@ -20,18 +20,18 @@ export async function getAuth(email, passHash) {
   }
 }
 
-export async function signIn(email, passHash) {
-  const auth = await Auth.findOne({
-    where: {
-      email,
-      password: passHash,
-    },
-  });
-  // Si no hay registro de ese usuario y esa contraseña, devuelve null
-  if (auth) {
-    const token = jwt.sign({ id: auth.dataValues.user_id }, SECRET);
-    return { token };
-  } else {
-    return { message: "not found" };
-  }
-}
+// export async function signIn(email, passHash) {
+//   const auth = await Auth.findOne({
+//     where: {
+//       email,
+//       password: passHash,
+//     },
+//   });
+//   // Si no hay registro de ese usuario y esa contraseña, devuelve null
+//   if (auth) {
+//     const token = jwt.sign({ id: auth.dataValues.user_id }, SECRET);
+//     return { token };
+//   } else {
+//     return { message: "not found" };
+//   }
+// }

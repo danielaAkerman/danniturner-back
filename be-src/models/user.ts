@@ -10,7 +10,7 @@ User.init(
     dni: { type: DataTypes.STRING },
     nivel: { type: DataTypes.STRING },
     negocio: { type: DataTypes.STRING },
-    estado_id: { type: DataTypes.INTEGER },
+    estado_user_id: { type: DataTypes.INTEGER },
   },
   { sequelize, modelName: "user" }
 );

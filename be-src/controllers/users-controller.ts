@@ -22,7 +22,7 @@ export async function signUp(datosUser) {
     apellido,
     nombre,
     dni,
-    estado_id,
+    estado_user_id: estado,
   });
 
   const auth = await Auth.create({
