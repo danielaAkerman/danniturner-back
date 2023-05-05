@@ -1,7 +1,7 @@
 import { sequelize } from "./models/connection";
-import { User, Auth, EstadoUser } from "./models";
+import { User, Auth, EstadoUser, Cliente } from "./models";
 
-sequelize.sync({ force: true }).then((res) => {
+Cliente.sequelize.sync({ alter: true }).then((res) => {
   console.log(res);
   // User.findAll();
 });

@@ -5,7 +5,7 @@ import * as process from "process";
 import * as cors from "cors";
 const sgMail = require("@sendgrid/mail");
 import * as jwt from "jsonwebtoken";
-import { User, Auth, EstadoUser } from "./models";
+import { User, Auth, EstadoUser, Cliente } from "./models";
 import { signUp } from "./controllers/users-controller";
 import { getAuth } from "./controllers/auth-controller";
 // import { getAuth, signIn } from "./controllers/auth-controller";
@@ -85,13 +85,25 @@ app.post("/login", async (req, res) => {
 // });
 
 // Registrar nuevo Cliete
-app.post("/nuevo-cliente", async (req,res)=>{
-  const nuevoCliente= await registrarNuevoCliente(req.body)
-  res.json(nuevoCliente)
-})
+app.post("/nuevo-cliente", async (req, res) => {
+  const nuevoCliente = await registrarNuevoCliente(req.body);
+  res.json(nuevoCliente);
+});
 
+app.get("/clientes", async (req, res) => {
+  const clientes = await Cliente.findAll();
+  res.json(clientes);
+});
 
-
+app.post("/search-cliente", async (req, res) => {
+  const { apellido } = req.body || "";
+  const { nombre } = req.body || "";
+  const { dni } = req.body || "";
+  const clienteEncontrado = await Cliente.findAll({
+    where: req.body,
+  });
+  res.json(clienteEncontrado);
+});
 
 app.use(express.static(staticDirPath));
 
