@@ -5,11 +5,11 @@ import * as process from "process";
 import * as cors from "cors";
 const sgMail = require("@sendgrid/mail");
 import * as jwt from "jsonwebtoken";
-import { User, Auth, Test } from "./models";
+import { User, Auth, Test, Estado } from "./models";
 import { signUp } from "./controllers/users-controller";
 import { signIn } from "./controllers/auth-controller";
+import { crearEstado } from "./controllers/estados-controller";
 // import { index } from "./lib/algolia";
-
 
 const port = process.env.PORT;
 const app = express();
@@ -23,10 +23,11 @@ function getSHA(text: string) {
   return crypto.createHash("sha256").update(text).digest("hex");
 }
 
-// // test
-// app.get("/test", async (req, res) => {
-//   res.json(true);
-// });
+// test
+app.get("/test", async (req, res) => {
+  const users = User.findAll();
+  res.json(users);
+});
 
 // app.post("/test", async (req, res) => {
 //   const test = Test.create(req.body);
@@ -38,7 +39,18 @@ function getSHA(text: string) {
 //   res.json(test);
 // });
 
+// Crear estados
+app.post("/estado", async (req, res) => {
+  const estado = req.body.nombre;
+  const respuesta = await crearEstado(estado);
+  res.json(respuesta);
+});
 
+// Ver estados
+app.get("/estado", async (req, res) => {
+  const respuesta = await Estado.findAll();
+  res.json(respuesta);
+});
 
 // logIn
 app.post("/login", async (req, res) => {
@@ -62,18 +74,21 @@ app.post("/login", async (req, res) => {
     return { message: "not found" };
   }
 
-
   res.json(auth);
 });
 
 // signUp
 app.post("/auth", async (req, res) => {
-  const { email, fullname, password } = req.body;
-  const passHash = getSHA(password);
-  const auth = await signUp(email, fullname, passHash);
+  req.body.password = getSHA(req.body.password); //Encripta pass
+  const auth = await signUp(req.body);
   res.json(auth);
 });
 
+// Ver Users
+app.get("/users", async (req, res) => {
+  const users = await User.findAll();
+  res.json(users);
+});
 
 // signIn
 app.post("/auth/token", async (req, res) => {

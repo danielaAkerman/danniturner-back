@@ -12,15 +12,22 @@ export async function getUserFromToken(token) {
   return user;
 }
 
-export async function signUp(email, fullname, passHash) {
+export async function signUp(datosUser) {
+  const { password, email, nivel, negocio, apellido, nombre, dni, estado } =
+    datosUser;
   const user = await User.create({
     email,
-    fullname,
+    nivel,
+    negocio,
+    apellido,
+    nombre,
+    dni,
+    estado_id,
   });
 
   const auth = await Auth.create({
     email,
-    password: passHash,
+    password,
     user_id: user.dataValues.id,
   });
   return auth;
