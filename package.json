@@ -1,0 +1,36 @@
+{
+  "name": "danniturnerback",
+  "version": "1.0.0",
+  "license": "MIT",
+  "scripts": {
+    "dev:front": "parcel serve --port 8080 ./front-src/index.html",
+    "dev:be": "ts-node ./be-src/dev.ts",
+    "dev": "npm run dev:be && npm run dev:front",
+    "build:be": "tsc",
+    "build:front": "parcel build ./front-src/index.html ",
+    "build": "npm run build:be && npm run build:front",
+    "start": "node ./be-dist/index.js",
+    "sync": "ts-node ./be-src/sync.ts"
+  },
+  "dependencies": {
+    "@sendgrid/mail": "^7.7.0",
+    "@types/node": "^18.11.18",
+    "algoliasearch": "^4.14.3",
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.3",
+    "express": "^4.18.2",
+    "jsonwebtoken": "^9.0.0",
+    "parcel": "^2.8.3",
+    "pg": "^8.8.0",
+    "pg-hstore": "^2.3.4",
+    "process": "^0.11.10",
+    "sequelize": "^6.28.0",
+    "typescript": "^4.9.4"
+  },
+  "devDependencies": {
+    "buffer": "^5.5.0",
+    "punycode": "^1.4.1",
+    "querystring-es3": "^0.2.1",
+    "url": "^0.11.0"
+  }
+}

@@ -1,0 +1,7 @@
+/node_modules
+/be-dist
+/dist
+/front-dist
+.env
+.parcel-cache
+*.js
