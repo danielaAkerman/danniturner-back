@@ -5,7 +5,7 @@ import * as process from "process";
 import * as cors from "cors";
 const sgMail = require("@sendgrid/mail");
 import * as jwt from "jsonwebtoken";
-import { User, Auth, EstadoUser, Cliente } from "./models";
+import { User, Auth, EstadoUser, Cliente, Negocio, Sucursal, Especialidad } from "./models";
 import { signUp } from "./controllers/users-controller";
 import { getAuth } from "./controllers/auth-controller";
 // import { getAuth, signIn } from "./controllers/auth-controller";
@@ -117,6 +117,36 @@ app.post("/edit-cliente/:id", async (req, res) => {
   res.json(clienteEditado);
 });
 
+app.post("/negocio", async (req, res) => {
+  const {nombre, sucursal_id} = req.body;
+  const nuevoNegocio = await Negocio.create(req.body);
+  res.json(nuevoNegocio);
+});
+
+app.get("/negocios", async (req, res) => {
+  const Negocios = await Negocio.findAll();
+  res.json(Negocios);
+});
+
+app.post("/sucursal", async (req, res) => {
+  const nuevaSucursal = await Sucursal.create(req.body);
+  res.json(nuevaSucursal);
+});
+
+app.get("/sucursales", async (req, res) => {
+  const Sucursales = await Sucursal.findAll();
+  res.json(Sucursales);
+});
+
+app.post("/especialidad", async (req, res) => {
+  const nuevaEspecialidad = await Especialidad.create(req.body);
+  res.json(nuevaEspecialidad);
+});
+
+app.get("/sucursales", async (req, res) => {
+  const Sucursales = await Sucursal.findAll();
+  res.json(Sucursales);
+});
 
 
 app.use(express.static(staticDirPath));
