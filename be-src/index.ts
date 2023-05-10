@@ -5,7 +5,7 @@ import * as process from "process";
 import * as cors from "cors";
 const sgMail = require("@sendgrid/mail");
 import * as jwt from "jsonwebtoken";
-import { User, Auth, EstadoUser, Cliente, Negocio, Sucursal, Especialidad } from "./models";
+import { User, Auth, EstadoUser, Cliente, Negocio, Sucursal, Especialidad, EstadoEspecialidad, Prestador, Horarios } from "./models";
 import { signUp } from "./controllers/users-controller";
 import { getAuth } from "./controllers/auth-controller";
 // import { getAuth, signIn } from "./controllers/auth-controller";
@@ -124,8 +124,8 @@ app.post("/negocio", async (req, res) => {
 });
 
 app.get("/negocios", async (req, res) => {
-  const Negocios = await Negocio.findAll();
-  res.json(Negocios);
+  const negocios = await Negocio.findAll();
+  res.json(negocios);
 });
 
 app.post("/sucursal", async (req, res) => {
@@ -134,8 +134,8 @@ app.post("/sucursal", async (req, res) => {
 });
 
 app.get("/sucursales", async (req, res) => {
-  const Sucursales = await Sucursal.findAll();
-  res.json(Sucursales);
+  const sucursales = await Sucursal.findAll();
+  res.json(sucursales);
 });
 
 app.post("/especialidad", async (req, res) => {
@@ -143,9 +143,39 @@ app.post("/especialidad", async (req, res) => {
   res.json(nuevaEspecialidad);
 });
 
-app.get("/sucursales", async (req, res) => {
-  const Sucursales = await Sucursal.findAll();
-  res.json(Sucursales);
+app.get("/especialidades", async (req, res) => {
+  const especialidades = await Especialidad.findAll();
+  res.json(especialidades);
+});
+
+app.post("/estado-especialidad", async (req, res) => {
+  const nuevoEstadoEsp = await EstadoEspecialidad.create(req.body);
+  res.json(nuevoEstadoEsp);
+});
+
+app.get("/estados-especialidad", async (req, res) => {
+  const estadosEsp = await EstadoEspecialidad.findAll();
+  res.json(estadosEsp);
+});
+
+app.post("/nuevo-prestador", async (req, res) => {
+  const nuevoPrestador = await Prestador.create(req.body);
+  res.json(nuevoPrestador);
+});
+
+app.get("/prestadores", async (req, res) => {
+  const prestadores = await Prestador.findAll();
+  res.json(prestadores);
+});
+
+app.post("/horario", async (req, res) => {
+  const nuevoHorario = await Horarios.create(req.body);
+  res.json(nuevoHorario);
+});
+
+app.get("/horarios", async (req, res) => {
+  const horarios = await Horarios.findAll();
+  res.json(horarios);
 });
 
 
