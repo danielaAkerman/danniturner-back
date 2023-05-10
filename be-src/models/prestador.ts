@@ -14,7 +14,7 @@ Prestador.init(
     domicilio: { type: DataTypes.STRING },
     matricula: { type: DataTypes.STRING },
     sucursal_id: { type: DataTypes.INTEGER },
-    horarios_id: { type: DataTypes.STRING },
+    horarios_id: { type: DataTypes.INTEGER },
     
   },
   { sequelize, modelName: "prestador" }

@@ -4,6 +4,7 @@ import { sequelize } from "./connection";
 export class Horarios extends Model {}
 Horarios.init(
   {
+    duracion: { type: DataTypes.INTEGER },
     in_dom: { type: DataTypes.TIME },
     in_lun: { type: DataTypes.TIME },
     in_mar: { type: DataTypes.TIME },

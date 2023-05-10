@@ -5,7 +5,19 @@ import * as process from "process";
 import * as cors from "cors";
 const sgMail = require("@sendgrid/mail");
 import * as jwt from "jsonwebtoken";
-import { User, Auth, EstadoUser, Cliente, Negocio, Sucursal, Especialidad, EstadoEspecialidad, Prestador, Horarios } from "./models";
+import {
+  User,
+  Auth,
+  EstadoUser,
+  Cliente,
+  Negocio,
+  Sucursal,
+  Especialidad,
+  EstadoEspecialidad,
+  Prestador,
+  Horarios,
+  Turnos,
+} from "./models";
 import { signUp } from "./controllers/users-controller";
 import { getAuth } from "./controllers/auth-controller";
 // import { getAuth, signIn } from "./controllers/auth-controller";
@@ -118,7 +130,7 @@ app.post("/edit-cliente/:id", async (req, res) => {
 });
 
 app.post("/negocio", async (req, res) => {
-  const {nombre, sucursal_id} = req.body;
+  const { nombre, sucursal_id } = req.body;
   const nuevoNegocio = await Negocio.create(req.body);
   res.json(nuevoNegocio);
 });
@@ -178,6 +190,32 @@ app.get("/horarios", async (req, res) => {
   res.json(horarios);
 });
 
+app.post("/turnos", async (req, res) => {
+  const nuevoTurno = await Turnos.create(req.body);
+  res.json(nuevoTurno);
+});
+
+app.get("/turnos", async (req, res) => {
+  const turnos = await Turnos.findAll();
+  res.json(turnos);
+});
+
+app.patch("/turnos", async (req, res) => {
+  const asignarAPaciente = await Turnos.update(req.body, { where: {} });
+  res.json(asignarAPaciente);
+});
+
+app.get("/turnos/:dni-cliente", async (req, res) => {
+  const dniCliente = req.params["dni-cliente"];
+  const turnosCliente = await Turnos.findAll({ where: { cliente_id: dniCliente } });
+  res.json(turnosCliente);
+});
+
+app.get("/turnos/:dni-prestador", async (req, res) => {
+  const dniPrestador = req.params["dni-prestador"];
+  const turnosprestador = await Turnos.findAll({ where: { prestador_id: dniPrestador } });
+  res.json(turnosprestador);
+});
 
 app.use(express.static(staticDirPath));
 
