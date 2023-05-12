@@ -6,6 +6,7 @@ import { Negocio } from "./negocio";
 import { Sucursal } from "./sucursal";
 import { Especialidad } from "./especialidad";
 import { EstadoEspecialidad } from "./estado-especialidad";
+import { EstadoTurno } from "./estado-turno";
 import { Prestador } from "./prestador";
 import { Horarios } from "./horarios";
 import { Turnos } from "./turnos";
@@ -40,6 +41,9 @@ Especialidad.belongsTo(Turnos);
 Turnos.hasOne(User);
 User.belongsTo(Turnos);
 
+Turnos.hasOne(EstadoTurno);
+EstadoTurno.belongsTo(Turnos);
+
 export {
   User,
   Auth,
@@ -52,4 +56,5 @@ export {
   Prestador,
   Horarios,
   Turnos,
+  EstadoTurno,
 };

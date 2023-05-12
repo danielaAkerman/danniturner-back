@@ -8,8 +8,13 @@ Turnos.init(
     prestador_id: { type: DataTypes.INTEGER },
     cliente_id: { type: DataTypes.INTEGER },
     user_id: { type: DataTypes.INTEGER },
-    desde: { type: DataTypes.DATEONLY },
-    hasta: { type: DataTypes.DATEONLY },
+    estado_turno_id: { type: DataTypes.INTEGER },
+    longId: { type: DataTypes.STRING },
+    shortId: { type: DataTypes.STRING },
+    fecha: { type: DataTypes.DATEONLY },
+    fechaHora: { type: DataTypes.STRING },
+    fechaFormato: { type: DataTypes.STRING },
+    horario: { type: DataTypes.STRING },
   },
   { sequelize, modelName: "turnos" }
 );
