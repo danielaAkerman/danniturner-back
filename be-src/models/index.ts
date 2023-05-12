@@ -22,17 +22,23 @@ Sucursal.belongsTo(Negocio);
 Especialidad.hasOne(EstadoEspecialidad);
 EstadoEspecialidad.belongsTo(Especialidad);
 
-Prestador.hasMany(Sucursal)
-Sucursal.belongsTo(Prestador)
+Prestador.hasMany(Sucursal);
+Sucursal.belongsTo(Prestador);
 
-Prestador.hasOne(Horarios)
-Horarios.belongsTo(Prestador)
+Prestador.hasMany(Especialidad);
+Especialidad.belongsTo(Prestador);
 
-Turnos.hasOne(Prestador)
-Prestador.belongsTo(Turnos)
+Prestador.hasOne(Horarios);
+Horarios.belongsTo(Prestador);
 
-Turnos.hasOne(Especialidad)
-Especialidad.belongsTo(Turnos)
+Turnos.hasOne(Prestador);
+Prestador.belongsTo(Turnos);
+
+Turnos.hasOne(Especialidad);
+Especialidad.belongsTo(Turnos);
+
+Turnos.hasOne(User);
+User.belongsTo(Turnos);
 
 export {
   User,
@@ -44,5 +50,6 @@ export {
   Especialidad,
   EstadoEspecialidad,
   Prestador,
-  Horarios, Turnos
+  Horarios,
+  Turnos,
 };
