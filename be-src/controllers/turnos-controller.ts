@@ -6,14 +6,16 @@ function fechas(inicio: string, fin: string, dia: number) {
   // POST: Devuelve las fechas de ese lapso que coincidan con ese día de la semana
 
   const dia_epoch = 86400000;
-  const tres_hs_epoch = dia_epoch / 8;
+  const tres_hs_epoch = dia_epoch / 8; // Por nuestra zona horaria (GMT-3)
   const fecha_inicial = new Date(inicio).getTime() + tres_hs_epoch; // en epoch
   const fecha_final = new Date(fin).getTime() + tres_hs_epoch; // en epoch
-  const dia_laborable = dia;
-  const fechas: Object[] = [];
+  const dia_laborable = dia; // del 0 al 6, de domingo a sábado
+  const fechas: string[] = [];
   var fecha_actual = fecha_inicial;
 
   while (fecha_actual <= fecha_final) {
+    // Recorre todos los días del lapso. 
+    // Día por día, se fija si ese día es laborable para el prestador
     if (new Date(fecha_actual).getDay() == dia_laborable) {
       const fecha_actual_date = new Date(fecha_actual);
       const fecha_yyyymmdd: string =
@@ -43,86 +45,84 @@ function turnosFraccionamiento(
   inicio_disponibilidad: number,
   fin_disponibilidad: number
 ) {
+  // PRE: Recibe la duración de cada turno, la hora de inicio de actividad de un día, y la hora de fin. Todo en minutos
+  // POST: Devuelve un string[] de turnos en formato 23:59
+
   const lapso_disponibilidad = fin_disponibilidad - inicio_disponibilidad;
-  if (lapso_disponibilidad > duracion_turno) {
+  if (lapso_disponibilidad >= duracion_turno) {
     const cantidad_turnos = Math.trunc(lapso_disponibilidad / duracion_turno);
     const horarios_turnos: string[] = [];
     var iteracion = 0;
     var horario_turno_actual: number = inicio_disponibilidad;
 
-    horarios_turnos.push(
-      Math.trunc(inicio_disponibilidad / 60) +
-        ":" +
-        ("0" + (horario_turno_actual % 60)).slice(-2)
-    );
-
-    while (iteracion < cantidad_turnos - 1) {
-      horario_turno_actual = horario_turno_actual + duracion_turno;
+    // Agrega el primer turno y luego los siguientes, sumandoles la duracion del turno
+    while (iteracion < cantidad_turnos) {
       horarios_turnos.push(
         Math.trunc(horario_turno_actual / 60) +
           ":" +
           ("0" + (horario_turno_actual % 60)).slice(-2)
       );
+      horario_turno_actual = horario_turno_actual + duracion_turno;
       iteracion++;
     }
-
-    console.log("Horarios de turnos: ", horarios_turnos);
 
     return horarios_turnos;
   }
 }
 
 export async function generarTurnos(datos) {
-  const { desde, hasta } = datos;
-  const { user_id, negocio_id, especialidad_id, prestador_id, horarios_id } =
-    datos;
+  const { desde, hasta } = datos; // Fechas en string
+  const { user_id, negocio_id, especialidad_id, prestador_id } = datos;
 
-  const horariosDB = await Horarios.findByPk(horarios_id);
+  // Obtengo la disponibilidad horaria de ese profesional
+  const horariosDB = await Horarios.findOne({
+    where: { prestadorId: prestador_id },
+  });
   const horarios = horariosDB.dataValues;
   const duracionTurno = horarios.duracion; // parseInt(horarios.dataValues.duracion);
 
   const diasIn = [
-    "in-dom",
-    "in-lunes",
-    "in-martes",
-    "in-mierc",
-    "in-juev",
-    "in-vier",
-    "in-sab",
+    "in_dom",
+    "in_lun",
+    "in_mar",
+    "in_mie",
+    "in_jue",
+    "in_vie",
+    "in_sab",
   ];
 
   const diasOut = [
-    "out-dom",
-    "out-lunes",
-    "out-martes",
-    "out-mierc",
-    "out-juev",
-    "out-vier",
-    "out-sab",
+    "out_dom",
+    "out_lun",
+    "out_mar",
+    "out_mie",
+    "out_jue",
+    "out_vie",
+    "out_sab",
   ];
 
   var i = 0;
   while (i < 7) {
+    // Si el prestador trabaja ese día
     if (horarios[diasIn[i]]) {
-      const horariosTurnosDia = turnosFraccionamiento(
+      const horariosTurnosDia: string[] = turnosFraccionamiento(
         duracionTurno,
         horarioAMinutos(horarios[diasIn[i]]),
         horarioAMinutos(horarios[diasOut[i]])
       );
-      const fechasDias_i = fechas(desde, hasta, i);
+      const fechasDias_i:string[] = fechas(desde, hasta, i); // Todas las fechas que trabaja el prestador, comprendidas en el lapso
 
       const turnosCompletos: Object[] = [];
       for (const f of fechasDias_i) {
-
         for (const h of horariosTurnosDia) {
           const id = uuidv4().toUpperCase();
           const datosTurno = {
             longId: id,
             shortId: id.slice(0, 7),
             prestador_id,
-            cliente_id:"",
-            fecha: f,
-            fechaHora:
+            cliente_id: null, // Sin cliente por defecto
+            fecha: f, //yyyymmdd para organizar cronológicamente
+            fechaHora: //yyyymmdd + horas + minutos, para organizar cronológicamente
               f.toString() +
               h.toString().slice(0, 2) +
               h.toString().slice(3, 5),
@@ -133,43 +133,15 @@ export async function generarTurnos(datos) {
               " " +
               f.toString().slice(0, 4),
             horario: h,
-            estado: "Disponible",
-            paciente: null,
+            estado_turno_id: 1, // Disponible por defecto
+            user_id,
+            negocio_id,
+            especialidad_id,
           };
 
-
-        turnosCompletos.push(datosTurno);
+          turnosCompletos.push(datosTurno);
+        }
       }
     }
   }
-}}
-
-// export async function signUp(datosUser) {
-//   const { password, email, nivel, negocio, apellido, nombre, dni, estado } =
-//     datosUser;
-//   const user = await User.create({
-//     email,
-//     nivel,
-//     negocio,
-//     apellido,
-//     nombre,
-//     dni,
-//     estado_user_id: estado,
-//   });
-
-//   const auth = await Auth.create({
-//     email,
-//     password,
-//     user_id: user.dataValues.id,
-//   });
-//   return auth;
-// }
-
-// export async function updateUser(userId, userData, passHash) {
-//   const updatedUser = await User.update(userData, { where: { id: userId } });
-//   if (userData.password) {
-//     userData.password = passHash;
-//     await Auth.update(userData, { where: { id: userId } });
-//   }
-//   return updatedUser;
-// }
+}

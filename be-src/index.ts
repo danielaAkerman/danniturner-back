@@ -191,6 +191,7 @@ app.get("/horarios", async (req, res) => {
 });
 
 app.post("/turnos", async (req, res) => {
+  // recibe desde, hasta, user_id, negocio_id, especialidad_id, prestador_id
   const nuevoTurno = await Turnos.create(req.body);
   res.json(nuevoTurno);
 });

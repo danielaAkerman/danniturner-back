@@ -9,6 +9,7 @@ Turnos.init(
     cliente_id: { type: DataTypes.INTEGER },
     user_id: { type: DataTypes.INTEGER },
     estado_turno_id: { type: DataTypes.INTEGER },
+    negocio_id: { type: DataTypes.INTEGER },
     longId: { type: DataTypes.STRING },
     shortId: { type: DataTypes.STRING },
     fecha: { type: DataTypes.DATEONLY },
