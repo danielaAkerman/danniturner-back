@@ -204,19 +204,26 @@ app.get("/turnos", async (req, res) => {
 });
 
 app.patch("/turnos", async (req, res) => {
-  const asignarAPaciente = await Turnos.update(req.body, { where: {} });
+  const { turno_id, cliente_id } = req.body;
+  const asignarAPaciente = await Turnos.update(cliente_id, {
+    where: { id: turno_id },
+  });
   res.json(asignarAPaciente);
 });
 
 app.get("/turnos/:dni-cliente", async (req, res) => {
   const dniCliente = req.params["dni-cliente"];
-  const turnosCliente = await Turnos.findAll({ where: { cliente_id: dniCliente } });
+  const turnosCliente = await Turnos.findAll({
+    where: { cliente_id: dniCliente },
+  });
   res.json(turnosCliente);
 });
 
 app.get("/turnos/:dni-prestador", async (req, res) => {
   const dniPrestador = req.params["dni-prestador"];
-  const turnosprestador = await Turnos.findAll({ where: { prestador_id: dniPrestador } });
+  const turnosprestador = await Turnos.findAll({
+    where: { prestador_id: dniPrestador },
+  });
   res.json(turnosprestador);
 });
 

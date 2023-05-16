@@ -1,7 +1,20 @@
 import { sequelize } from "./models/connection";
-import { User, Auth, EstadoUser, Cliente, Negocio , Especialidad} from "./models";
+import {
+  User,
+  Auth,
+  EstadoUser,
+  Cliente,
+  Negocio,
+  Especialidad,
+  EstadoEspecialidad,
+  EstadoTurno,
+  Horarios,
+  Prestador,
+  Sucursal,
+  Turnos,
+} from "./models";
 
-Especialidad.sequelize.sync({ alter: true }).then((res) => {
+User.sequelize.sync({ alter: true }).then((res) => {
   console.log(res);
   // User.findAll();
 });
