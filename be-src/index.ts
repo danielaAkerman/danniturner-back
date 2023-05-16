@@ -23,6 +23,7 @@ import { getAuth } from "./controllers/auth-controller";
 // import { getAuth, signIn } from "./controllers/auth-controller";
 import { crearEstado } from "./controllers/estados-controller";
 import { registrarNuevoCliente } from "./controllers/cliente-controller";
+import { generarTurnos } from "./controllers/turnos-controller";
 // import { index } from "./lib/algolia";
 
 const port = process.env.PORT;
@@ -192,8 +193,9 @@ app.get("/horarios", async (req, res) => {
 
 app.post("/turnos", async (req, res) => {
   // recibe desde, hasta, user_id, negocio_id, especialidad_id, prestador_id
-  const nuevoTurno = await Turnos.create(req.body);
-  res.json(nuevoTurno);
+  // desde y hasta en formato string yyyy-mm-dd
+  const nuevoTurnos = await generarTurnos(req.body);
+  res.json(nuevoTurnos);
 });
 
 app.get("/turnos", async (req, res) => {

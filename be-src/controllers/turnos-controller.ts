@@ -14,7 +14,7 @@ function fechas(inicio: string, fin: string, dia: number) {
   var fecha_actual = fecha_inicial;
 
   while (fecha_actual <= fecha_final) {
-    // Recorre todos los días del lapso. 
+    // Recorre todos los días del lapso.
     // Día por día, se fija si ese día es laborable para el prestador
     if (new Date(fecha_actual).getDay() == dia_laborable) {
       const fecha_actual_date = new Date(fecha_actual);
@@ -71,8 +71,10 @@ function turnosFraccionamiento(
 }
 
 export async function generarTurnos(datos) {
-  const { desde, hasta } = datos; // Fechas en string
+  const { desde, hasta } = datos; // Fechas en string yyyy-mm-dd
   const { user_id, negocio_id, especialidad_id, prestador_id } = datos;
+
+  const turnosCompletos: any[] = [];
 
   // Obtengo la disponibilidad horaria de ese profesional
   const horariosDB = await Horarios.findOne({
@@ -110,9 +112,8 @@ export async function generarTurnos(datos) {
         horarioAMinutos(horarios[diasIn[i]]),
         horarioAMinutos(horarios[diasOut[i]])
       );
-      const fechasDias_i:string[] = fechas(desde, hasta, i); // Todas las fechas que trabaja el prestador, comprendidas en el lapso
+      const fechasDias_i: string[] = fechas(desde, hasta, i); // Todas las fechas que trabaja el prestador, comprendidas en el lapso
 
-      const turnosCompletos: Object[] = [];
       for (const f of fechasDias_i) {
         for (const h of horariosTurnosDia) {
           const id = uuidv4().toUpperCase();
@@ -122,7 +123,8 @@ export async function generarTurnos(datos) {
             prestador_id,
             cliente_id: null, // Sin cliente por defecto
             fecha: f, //yyyymmdd para organizar cronológicamente
-            fechaHora: //yyyymmdd + horas + minutos, para organizar cronológicamente
+            //yyyymmdd + horas + minutos, para organizar cronológicamente
+            fechaHora:
               f.toString() +
               h.toString().slice(0, 2) +
               h.toString().slice(3, 5),
@@ -144,4 +146,5 @@ export async function generarTurnos(datos) {
       }
     }
   }
+  await turnosCompletos.map((t) => Turnos.create(t));
 }
