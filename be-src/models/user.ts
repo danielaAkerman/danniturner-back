@@ -8,8 +8,9 @@ User.init(
     apellido: { type: DataTypes.STRING },
     nombre: { type: DataTypes.STRING },
     dni: { type: DataTypes.STRING },
-    nivel: { type: DataTypes.STRING },
+    nivel_permisos: { type: DataTypes.STRING },
     negocio: { type: DataTypes.STRING },
+    fecha_nacimiento: { type: DataTypes.DATEONLY },
     estado_user_id: { type: DataTypes.INTEGER },
   },
   { sequelize, modelName: "user" }

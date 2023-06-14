@@ -14,7 +14,7 @@ import {
   Turnos,
 } from "./models";
 
-User.sequelize.sync({ alter: true }).then((res) => {
+User.sequelize.sync({ force: true }).then((res) => {
   console.log(res);
   // User.findAll();
 });

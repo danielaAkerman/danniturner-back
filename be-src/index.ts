@@ -38,22 +38,6 @@ function getSHA(text: string) {
   return crypto.createHash("sha256").update(text).digest("hex");
 }
 
-// test
-app.get("/test", async (req, res) => {
-  const users = User.findAll();
-  res.json(users);
-});
-
-// app.post("/test", async (req, res) => {
-//   const test = Test.create(req.body);
-//   res.json(true);
-// });
-
-// app.get("/test/:id", async (req, res) => {
-//   const test = await Test.findByPk(req.params.id);
-//   res.json(test);
-// });
-
 // Crear estados User
 app.post("/estado", async (req, res) => {
   const estado = req.body.nombre;
@@ -68,10 +52,85 @@ app.get("/estado", async (req, res) => {
 });
 
 // signUp
+// app.post("/auth", async (req, res) => {
+//   req.body.password = getSHA(req.body.password); //Encripta pass
+//   const auth = await signUp(req.body);
+//   res.json(auth);
+// });
+
+// signUp
 app.post("/auth", async (req, res) => {
-  req.body.password = getSHA(req.body.password); //Encripta pass
-  const auth = await signUp(req.body);
+  // Se obtiene toda la info en el mismo endpoint,
+  // pero se crean dos registros, uno en cada tabla: User y Auth
+
+  const {
+    email,
+    apellido,
+    nombre,
+    dni,
+    nivel_permisos,
+    negocio,
+    fecha_nacimiento,
+    estado_user_id,
+  } = req.body;
+
+  const [user, userCreated] = await User.findOrCreate({
+    // created es un flag (true o false)
+
+    where: { email }, // Se fija si ya existe
+    defaults: {
+      email,
+      apellido,
+      nombre,
+      dni,
+      nivel_permisos,
+      negocio,
+      fecha_nacimiento,
+      estado_user_id,
+    },
+  });
+
+  const password = getSHA(req.body.password);
+  const user_id = user.dataValues.id;
+
+  const [auth, authCreated] = await Auth.findOrCreate({
+    // created es un flag (true o false)
+
+    where: { user_id }, // Se fija si ya existe
+    defaults: {
+      email,
+      password,
+      user_id,
+    },
+  });
+
   res.json(auth);
+});
+
+// logIn - signIn (Obtener un token)
+/* 
+Cuando el usuario se loguea en nuestro sistema se le solicita email y password,
+se hashea la contraseña nuevamente para poder compararla con la almacenada.
+Si el proceso sale OK, se devuelve un TOKEN (jwt)
+*/
+app.post("/auth/token", async (req, res) => {
+  const { email } = req.body;
+  const password = getSHA(req.body.password);
+
+  const auth = await Auth.findOne({ where: { email, password } });
+  const token = jwt.sign(
+    {
+      id: auth.dataValues.user_id,
+    },
+    SECRET
+  );
+
+  if (auth) {
+    res.json({token});
+  } else {
+    res.status(400).json({ error: "User not found" });
+  }
+  // FALTA GENERAR EL TOKEN
 });
 
 // Ver Users
@@ -80,22 +139,12 @@ app.get("/users", async (req, res) => {
   res.json(users);
 });
 
-// logIn
-app.post("/login", async (req, res) => {
-  const { email, password } = req.body;
-  const passHash = getSHA(password);
-  const auth = await getAuth(email, passHash);
-
-  res.json(auth); //Devuelve token y toda la info del user
+// Ver un User
+app.get("/users/:userId", async (req, res) => {
+  const { userId } = req.params;
+  const foundUser = await User.findByPk(userId);
+  res.json(foundUser);
 });
-
-// signIn
-// app.post("/auth/token", async (req, res) => {
-//   const { email, password } = req.body;
-//   const passHash = getSHA(password);
-//   const auth = await signIn(email, passHash);
-//   res.json(auth);
-// });
 
 // Registrar nuevo Cliete
 app.post("/nuevo-cliente", async (req, res) => {
