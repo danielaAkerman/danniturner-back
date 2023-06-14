@@ -118,19 +118,44 @@ app.post("/auth/token", async (req, res) => {
   const password = getSHA(req.body.password);
 
   const auth = await Auth.findOne({ where: { email, password } });
-  const token = jwt.sign(
-    {
-      id: auth.dataValues.user_id,
-    },
-    SECRET
-  );
 
   if (auth) {
-    res.json({token});
+    const token = jwt.sign(
+      {
+        id: auth.dataValues.user_id,
+      },
+      SECRET
+    );
+
+    res.json({ token });
   } else {
     res.status(400).json({ error: "User not found" });
   }
-  // FALTA GENERAR EL TOKEN
+});
+
+// Se crea MIDDLEWARE para verificar token
+// Esta función será llamada en los request
+function authMiddleWare(req, res, next) {
+  const authorizationHeader = req.headers.authorization;
+  const token = authorizationHeader.split(" ")[1];
+
+  try {
+    const data = jwt.verify(token, SECRET);
+    req._user = data;
+    next();
+  } catch (e) {
+    res.status(400).json({ error: true });
+  }
+}
+
+app.get("/me", authMiddleWare, async (req, res) => {
+  /* 
+  Recordar enviar token en front:
+  headers: {‘Authorization’: ‘bearer <token>’}
+  */
+
+  const user = await User.findByPk(req._user.id);
+  res.json(user);
 });
 
 // Ver Users
