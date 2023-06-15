@@ -5,6 +5,7 @@ import * as process from "process";
 import * as cors from "cors";
 const sgMail = require("@sendgrid/mail");
 import * as jwt from "jsonwebtoken";
+import * as uuid from "uuid";
 import {
   User,
   Auth,
@@ -90,7 +91,8 @@ app.post("/auth", async (req, res) => {
     },
   });
 
-  const password = getSHA(req.body.password);
+  // const password = getSHA(req.body.password);
+  const password = "1234DANI"
   const user_id = user.dataValues.id;
 
   const [auth, authCreated] = await Auth.findOrCreate({
